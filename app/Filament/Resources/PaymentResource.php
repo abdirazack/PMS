@@ -32,7 +32,7 @@ class PaymentResource extends Resource
                 Forms\Components\TextInput::make('amount')
                     ->numeric()
                     ->default(0.00),
-                Forms\Components\DatePicker::make('payment_date'),
+                Forms\Components\DatePicker::make('payment_date')->native(false),
                 Forms\Components\TextInput::make('payment_method')
                     ->maxLength(255),
             ]);
