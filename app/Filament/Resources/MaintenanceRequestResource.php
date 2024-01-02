@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MaintenanceRequestResource\Pages;
-use App\Filament\Resources\MaintenanceRequestResource\RelationManagers;
-use App\Models\MaintenanceRequest;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use App\Models\Property;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use App\Models\MaintenanceRequest;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\MaintenanceRequestResource\Pages;
+use App\Filament\Resources\MaintenanceRequestResource\RelationManagers;
 
 class MaintenanceRequestResource extends Resource
 {
@@ -31,18 +34,27 @@ class MaintenanceRequestResource extends Resource
                 Forms\Components\TextInput::make('tenant_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('property_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('assigned_to')
-                    ->required()
-                    ->numeric(),
+                // Forms\Components\TextInput::make('properties.name')
+                //     ->required(),
+                Select::make('property_id')->options(
+                    Property::all()->pluck('name', 'id')
+                )->native(false)->required(),
+                // Forms\Components\TextInput::make('assigned_to')
+                //     ->required()
+                //     ->numeric(),
+
+                Select::make('assigned_to')->options(
+                    User::all()->pluck('name', 'id')
+                )->native(false)->required(),
                 Forms\Components\TextInput::make('priority')
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('request_date'),
                 Forms\Components\DatePicker::make('completion_date'),
-                Forms\Components\TextInput::make('status')
-                    ->maxLength(255),
+                // Forms\Components\TextInput::make('status')
+                //     ->maxLength(255),
+                Select::make('status')->options(
+                    ['pending', 'completed', 'in progress', 'cancelled', 'rejected']
+                )->native(false)->required(),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),
             ]);
