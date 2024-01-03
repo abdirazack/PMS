@@ -19,7 +19,7 @@ class PropertyOwnerResource extends Resource
 {
     protected static ?string $model = PropertyOwner::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
     protected static ?string $navigationGroup = 'Property Management';
 

@@ -20,7 +20,7 @@ class LeaseResource extends Resource
 {
     protected static ?string $model = Lease::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?string $navigationGroup = 'Property Management';
 
@@ -37,7 +37,7 @@ class LeaseResource extends Resource
                     ->options(function () {
                         return Tenant::with('user')->get()->pluck('user.name', 'id')->toArray();
                     }),
-                    Forms\Components\Select::make('property_id')
+                Forms\Components\Select::make('property_id')
                     ->required()
                     ->native(false)
                     ->searchable()
