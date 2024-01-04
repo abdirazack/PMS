@@ -2,16 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use App\Models\Tenant;
+use App\Models\Document;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\DocumentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\DocumentResource\RelationManagers;
+use Filament\Forms\Components\Select;
+
 
 class DocumentResource extends Resource
 {
@@ -27,20 +32,40 @@ class DocumentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('tenant_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('property_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('uploaded_by')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('tenant_id')
+                ->required()
+                ->native(false)
+                ->searchable()
+                ->options(function () {
+                    return Tenant::with('user')->get()->pluck('user.name', 'id');
+                }),
+                Forms\Components\Select::make('property_id')
+                ->required()
+                ->native(false)
+                ->searchable()
+                ->options(function () {
+                    return  Tenant::with('property')->get()->pluck('property.name', 'id');
+                })
+                ,
+                Forms\Components\Select::make('uploaded_by')
+                ->required()
+                ->native(false)
+                ->searchable()
+                ->options(function () {
+                    return User::all()->pluck('name', 'id');
+                }),
                 Forms\Components\TextInput::make('document_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('file_path')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('upload_date'),
+                Forms\Components\FileUpload::make('file_path')
+                    ->preserveFilenames()
+                    ->directory('Documents')
+                    ->reorderable()
+                    ->openable()
+                    ->downloadable()
+                    ->moveFiles()
+                    ->directory('Documents')
+                    ,
+                Forms\Components\DatePicker::make('upload_date')->native(false),
             ]);
     }
 
@@ -48,22 +73,45 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('tenant_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('property_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('uploaded_by')
-                    ->numeric()
-                    ->sortable(),
+                Forms\Components\Select::make('tenant_id')
+                ->required()
+                ->native(false)
+                ->searchable()
+                ->options(function () {
+                    return Tenant::with('user')->get()->pluck('user.name', 'id');
+                }),
+                Forms\Components\Select::make('property_id')
+                ->required()
+                ->native(false)
+                ->searchable()
+                ->options(function () {
+                    return  Tenant::with('property')->get()->pluck('property.name', 'id');
+                })
+                ,
+                Forms\Components\Select::make('uploaded_by')
+                ->required()
+                ->native(false)
+                ->searchable()
+                ->options(function () {
+                    return User::all()->pluck('name', 'id');
+                }),
                 Tables\Columns\TextColumn::make('document_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file_path')
-                    ->searchable(),
+
+                Forms\Components\FileUpload::make('file_path')
+                    ->preserveFilenames()
+                    ->directory('Documents')
+                    ->reorderable()
+                    ->openable()
+                    ->downloadable()
+                    ->moveFiles()
+                    ->directory('Documents')
+                    ,
                 Tables\Columns\TextColumn::make('upload_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->native(false),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

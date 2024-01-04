@@ -10,6 +10,8 @@ class Document extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $guarded = [];
     public function property()
     {
         return $this->belongsTo(Property::class);
@@ -24,4 +26,8 @@ class Document extends Model
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }
+
+    protected $casts = [
+        'file_path' => 'array',
+    ];
 }
