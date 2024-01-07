@@ -16,6 +16,7 @@ use App\Filament\Resources\UserResource\Pages;
 use phpDocumentor\Reflection\Types\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Tables\Columns\ToggleColumn;
 
 class UserResource extends Resource
 {
@@ -92,11 +93,12 @@ class UserResource extends Resource
                     ->date()
                     ->sortable()
                     ,
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+               ToggleColumn::make('status')
+                    ,
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
