@@ -56,9 +56,12 @@ class DocumentResource extends Resource
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('file_path')
                     ->required()
-                    ->disk('public')
-                    ->directory('Documents')
-                    ->preserveFilenames(),
+                    ->preserveFilenames()
+                    ->multiple()
+                    ->reorderable()
+                    ->previewable()
+                    ->downloadable()
+                    ->acceptedFileTypes(['image/*', 'application/pdf']),
                 Forms\Components\DatePicker::make('upload_date')->native(false),
             ]);
     }
