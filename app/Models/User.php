@@ -12,11 +12,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Filament\Models\Concerns\IsFilamentUser;
+use Filament\Models\Contracts\FilamentUser;
+
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
     use SoftDeletes;
+    // use IsFilamentUser;
     protected $guarded = [];
 
     protected $hidden = [
@@ -43,6 +47,14 @@ class User extends Authenticatable
     public function tenant()
     {
         return $this->hasOne(Tenant::class);
+    }
+
+
+        /**
+     * Hash the password on save/update.
+    */
+    public function setPasswordAttribute($value) {
+        $this->attributes['password'] = bcrypt($value);
     }
 
 

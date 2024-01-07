@@ -57,7 +57,9 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('phone')
                             ->tel()
                             ->maxLength(255),
-                        Forms\Components\DatePicker::make('birthdate'),
+                        Forms\Components\DatePicker::make('birthdate')
+                        ->required()
+                        ->native(false),
                         Forms\Components\Toggle::make('status'),
                         Forms\Components\DateTimePicker::make('email_verified_at'),
                         Forms\Components\TextInput::make('password')
@@ -88,7 +90,8 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birthdate')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ,
                 Tables\Columns\IconColumn::make('status')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('email_verified_at')
