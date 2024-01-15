@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Request;
+// use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class EmailController extends Controller
 {
