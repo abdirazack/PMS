@@ -42,10 +42,13 @@ class LeaseResource extends Resource
                     ->native(false)
                     ->searchable()
                     ->options(function () {
-                        return Property::whereNotNull('id')->get()->pluck('name', 'id');
-                    }),
-                Forms\Components\DatePicker::make('start_date'),
-                Forms\Components\DatePicker::make('end_date'),
+                        return  Tenant::with('property')->get()->pluck('property.name', 'id')->toArray();
+                    })
+                    ,
+                Forms\Components\DatePicker::make('start_date')
+                ->native(false),
+                Forms\Components\DatePicker::make('end_date')
+                ->native(false),
                 Forms\Components\TextInput::make('rent_amount')
                     ->numeric()
                     ->default(0.00),

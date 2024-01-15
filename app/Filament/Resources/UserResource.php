@@ -16,6 +16,7 @@ use App\Filament\Resources\UserResource\Pages;
 use phpDocumentor\Reflection\Types\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Tables\Columns\ToggleColumn;
 
 class UserResource extends Resource
 {
@@ -57,7 +58,9 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('phone')
                             ->tel()
                             ->maxLength(255),
-                        Forms\Components\DatePicker::make('birthdate'),
+                        Forms\Components\DatePicker::make('birthdate')
+                        ->required()
+                        ->native(false),
                         Forms\Components\Toggle::make('status'),
                         Forms\Components\DateTimePicker::make('email_verified_at'),
                         Forms\Components\TextInput::make('password')
@@ -88,12 +91,14 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birthdate')
                     ->date()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+                    ->sortable()
+                    ,
+               ToggleColumn::make('status')
+                    ,
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
