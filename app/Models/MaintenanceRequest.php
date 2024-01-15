@@ -10,6 +10,19 @@ class MaintenanceRequest extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $fillable = [
+        'tenant_id',
+        'property_id',
+        'assigned_to',
+        'priority',
+        'request_date',
+        'completion_date',
+        'status',
+        'description',
+    ];
+
+
     public function property()
     {
         return $this->belongsTo(Property::class);

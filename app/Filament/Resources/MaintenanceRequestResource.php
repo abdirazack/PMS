@@ -2,22 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MaintenanceRequestResource\Pages;
-use App\Filament\Resources\MaintenanceRequestResource\RelationManagers;
-use App\Models\MaintenanceRequest;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use App\Models\Tenant;
+use App\Models\Property;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use App\Models\MaintenanceRequest;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\MaintenanceRequestResource\Pages;
+use App\Filament\Resources\MaintenanceRequestResource\RelationManagers;
 
 class MaintenanceRequestResource extends Resource
 {
     protected static ?string $model = MaintenanceRequest::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     protected static ?string $navigationGroup = 'Others';
 
@@ -28,22 +33,37 @@ class MaintenanceRequestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('tenant_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('property_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('assigned_to')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('priority')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('request_date'),
-                Forms\Components\DatePicker::make('completion_date'),
-                Forms\Components\TextInput::make('status')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('description')
+                Forms\Components\Select::make('tenant_id')->options(
+                    Tenant::all()->pluck('user_id', 'id')
+                    // get the user name using the user_id
+                    // User::all()->pluck('name', Tenant::all()->pluck('user_id', 'id'))
+                )->native(false)->required(),
+
+                Select::make('property_id')->options(
+                    Property::all()->pluck('name', 'id')
+                )->native(false)->required()->label('Property'),
+
+                Select::make('assigned_to')->options(
+                    User::all()->pluck('name', 'id')
+                )->native(false)->required(),
+
+                Select::make('priority')->options(
+                    ['low', 'medium', 'high']
+                )->native(false)->required(),
+
+                Forms\Components\DatePicker::make('request_date')->native(false)->label('Request Date'),
+                Forms\Components\DatePicker::make('completion_date')->native(false)->label('Completion Date'),
+
+                Select::make('status')->options(
+                    [
+                        'pending' => 'pending',
+                        'completed' => 'completed',
+                        'in progress'   => 'in progress',
+                        'cancelled' => 'cancelled',
+                        'rejected' => 'rejected',
+                    ]
+                )->native(false)->required(),
+                Forms\Components\Textarea::make('description')
                     ->maxLength(255),
             ]);
     }
@@ -53,9 +73,10 @@ class MaintenanceRequestResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('tenant_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('property_id')
+                    // ->numeric()
+                    ->sortable()
+                    ->label('Tenant'),
+                Tables\Columns\TextColumn::make('property.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('assigned_to')
@@ -68,9 +89,19 @@ class MaintenanceRequestResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('completion_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Completion Date'),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'info',
+                        'in progress' => 'primary',
+                        'cancelled' => 'gray',
+                        'reviewing' => 'warning',
+                        'completed' => 'success',
+                        'rejected' => 'danger',
+                    }),
                 Tables\Columns\TextColumn::make('description')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
